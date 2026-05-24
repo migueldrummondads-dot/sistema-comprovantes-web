@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Login - Grupo RCR
+    </title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body class="login-body">
+
+    <div class="login-bg"></div>
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <div class="login-logo">
+
+                <img src="{{ url_for('static', filename='img/favicon.png') }}" class="logo-empresa">
+
+            </div>
+
+            <h1>
+                Bem-vindo
+            </h1>
+
+            <p>
+                Sistema Corporativo de Comprovantes
+            </p>
+
+            {% if erro %}
+
+            <div class="error-message">
+
+                {{ erro }}
+
+            </div>
+
+            {% endif %}
+
+            <form method="POST">
+
+                <div class="input-group">
+
+                    <input type="text" name="username" placeholder="Usuário" required>
+
+                </div>
+
+                <div class="input-group">
+
+                    <input type="password" name="password" placeholder="Senha" required>
+
+                </div>
+
+                <button type="submit">
+
+                    Entrar no Sistema
+
+                </button>
+
+            </form>
+
+            <div class="login-links">
+
+                <a href="/criar_usuario_publico">
+
+                    Criar Conta
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

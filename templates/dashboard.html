@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Grupo RCR</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='img/favicon.png') }}">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+
+        <div>
+
+            <div class="logo">
+
+                <span>GRUPO</span>
+
+                RCR
+
+            </div>
+
+            <div class="menu">
+
+                <a href="#">
+                    📊 Dashboard
+                </a>
+
+                <a href="#">
+                    📄 Upload PDFs
+                </a>
+
+                <a href="#">
+                    📁 Histórico
+                </a>
+
+                <a href="#">
+                    👥 Usuários
+                </a>
+
+            </div>
+
+        </div>
+
+        <a href="/logout" class="logout">
+            🚪 Sair
+        </a>
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="main">
+
+        <!-- TOPO -->
+
+        <div class="topbar">
+
+            <h1>
+                Painel Corporativo
+            </h1>
+
+            <p>
+                Bem-vindo, {{ usuario }}
+            </p>
+
+        </div>
+
+        <!-- CARDS -->
+
+        <div class="cards">
+
+            <div class="card">
+
+                <h2>
+                    PDFs Processados
+                </h2>
+
+                <p class="number">
+                    {{ total }}
+                </p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>
+                    Usuários
+                </h2>
+
+                <p class="number">
+                    {{ total_usuarios }}
+                </p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>
+                    Sistema
+                </h2>
+
+                <p class="online">
+                    Online
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- UPLOAD -->
+
+        <div class="upload-box">
+
+            <h2>
+                Upload de PDFs
+            </h2>
+
+            <p class="subtitle">
+                Arraste os arquivos ou clique abaixo
+            </p>
+
+            <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+
+                <label for="pdfs" class="drop-area">
+
+                    <div class="upload-icon">
+                        📄
+                    </div>
+
+                    <h3>
+                        Arraste os PDFs aqui
+                    </h3>
+
+                    <span>
+                        ou clique para selecionar
+                    </span>
+
+                    <input type="file" name="pdfs" id="pdfs" multiple required hidden>
+
+                </label>
+
+                <div class="buttons-area">
+
+                    <button class="btn" type="submit">
+
+                        Processar PDFs
+
+                    </button>
+
+                    <a href="/download_todos" class="download-all">
+
+                        📦 Baixar Todos
+
+                    </a>
+
+                    <a href="/apagar_todos" class="delete-all" onclick="return confirm(
+                        'Deseja apagar TODOS os PDFs?'
+                    )">
+
+                        🗑️ Apagar Todos
+
+                    </a>
+
+                </div>
+
+                <div class="loading" id="loading">
+
+                    Processando comprovantes...
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- TABELA -->
+
+        <div class="table-box">
+
+            <div class="table-header">
+
+                <h2>
+                    PDFs Processados
+                </h2>
+
+            </div>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Nome</th>
+
+                        <th>Status</th>
+
+                        <th>Ações</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for arquivo in arquivos %}
+
+                    <tr>
+
+                        <td>
+                            {{ arquivo }}
+                        </td>
+
+                        <td>
+                            ✅ Processado
+                        </td>
+
+                        <td class="actions">
+
+                            <a href="/visualizar/{{ arquivo }}" target="_blank" class="view-btn">
+
+                                Abrir
+
+                            </a>
+
+                            <a href="/download/{{ arquivo }}" class="download-btn">
+
+                                Baixar
+
+                            </a>
+
+                            <a href="/excluir/{{ arquivo }}" class="delete-btn" onclick="return confirm(
+                                'Deseja excluir este PDF?'
+                            )">
+
+                                Excluir
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const form =
+            document.getElementById("uploadForm")
+
+        const loading =
+            document.getElementById("loading")
+
+        const dropArea =
+            document.querySelector(".drop-area")
+
+        const input =
+            document.getElementById("pdfs")
+
+        // Loading
+
+        form.addEventListener("submit", () => {
+
+            loading.style.display = "block"
+
+        })
+
+            // BLOQUEAR comportamento padrão
+
+            ;[
+                "dragenter",
+                "dragover",
+                "dragleave",
+                "drop"
+            ].forEach(eventName => {
+
+                dropArea.addEventListener(
+                    eventName,
+                    preventDefaults,
+                    false
+                )
+
+            })
+
+        function preventDefaults(e) {
+
+            e.preventDefault()
+            e.stopPropagation()
+
+        }
+
+        // EFEITO VISUAL
+
+        ;[
+            "dragenter",
+            "dragover"
+        ].forEach(eventName => {
+
+            dropArea.addEventListener(
+                eventName,
+                () => {
+
+                    dropArea.classList.add("drag-active")
+
+                },
+                false
+            )
+
+        })
+
+            ;[
+                "dragleave",
+                "drop"
+            ].forEach(eventName => {
+
+                dropArea.addEventListener(
+                    eventName,
+                    () => {
+
+                        dropArea.classList.remove("drag-active")
+
+                    },
+                    false
+                )
+
+            })
+
+        // PEGAR ARQUIVOS
+
+        dropArea.addEventListener(
+            "drop",
+            (e) => {
+
+                const files = e.dataTransfer.files
+
+                input.files = files
+
+            }
+        )
+
+    </script>
+
+</body>
+
+</html>
